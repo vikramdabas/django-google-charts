@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html lang="en">
+{% load static %}
+
+<head>
+    <meta charset="UTF-8">
+    <title>Sorry, This Page Can&#39;t Be Accessed</title>
+</head>
+<body>
+<div class="container">
+    <div class="row mb-4 pb-4">
+        <div class="col-md-3 text-center">
+            <i class="fas fa-exclamation-triangle fa-10x" style="color: #dc3545;"></i>
+            <p class="mt-2 text-black">Status Code: 403</p>
+        </div>
+        <div class="col-md-8">
+            <h3 class="mb-2">OPPSSS!!!! Access Denied...</h3>
+            <p style="font-size: 1.5em; color: #1b1e21">
+                Sorry, your access is refused due to security reasons of our server and also our sensitive data.
+                <br/> <br/>
+                Please go back to the previous page to continue browsing.
+            </p>
+            <a class="btn btn-danger" href="javascript:history.back()">Go Back</a>
+        </div>
+        <div class="col-md-1">
+
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="columns col-md-12 text-center">
+            <h2>Please contact Admin Team for further details</h2>
+        </div>
+    </div>
+</div>
+
+</body>
+</html>

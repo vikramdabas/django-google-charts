@@ -1,0 +1,122 @@
+<!DOCTYPE html>
+<html lang="en">
+{% load static %}
+
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+
+    <!-- Bootstrap CSS CDN -->
+    <link rel="stylesheet" href="{% static 'css/bootstrap.min.css' %}">
+
+    <!-- Font Awesome JS -->
+    <script defer src="{% static 'js/solid.js' %}" integrity="sha384-tzzSw1/Vo+0N5UhStP3bvwWPq+uvzCMfrN1fEFe+xBmv1C/AtVX5K0uZtmcHitFZ" crossorigin="anonymous"></script>
+    {#    <script defer src="{% static 'js/fontawesome.js' %}" integrity="sha384-6OIrr52G08NpOFSZdxxz1xdNSndlD4vdcf/q2myIUVO0VsqaGHJsB0RaBE01VTOY" crossorigin="anonymous"></script>#}
+    <script defer src="{% static 'fonts/fontawesome-5.15.3/js/all.min.js' %}" crossorigin="anonymous"></script>
+    <link rel="stylesheet" href="{% static 'fonts/fontawesome-5.15.3/css/all.min.css' %}">
+    {#    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">#}
+    <style>
+        html {
+            /* default font-size is 16px - this is set in the default browser stylesheet */
+            font-size: 14px;
+            font-weight: 400;
+            line-height: 1.5;
+        }
+    </style>
+</head>
+
+<body>
+
+<div class="container">
+    <div class="page-header">
+        <h1>Dashboard</h1>
+    </div>
+
+    <div class="row mb-4">
+        <div class="col-md-12">
+            <div class="bg-white p-2 rounded">
+                <!--Div that will hold the stacked bar chart-->
+                <div id="sbar_div" class=""></div>
+            </div>
+        </div>
+    </div>
+</div>
+</body>
+
+<!--Load the AJAX API-->
+<script src="http://ajax.googleapis.com/ajax/libs/jquery/1.11.1/jquery.min.js"></script>
+<script type="text/javascript" src="https://www.gstatic.com/charts/loader.js"></script>
+<script type="text/javascript">
+    var week = 24;
+    var stage_week = 6;
+    var dashboard_config = {{ dashboard_config|safe }};
+    if (dashboard_config.length === 1) {
+        week = dashboard_config[0]["week"];
+        stage_week = dashboard_config[0]["stage_week"];
+    }
+
+    function sbar_div() {
+        var jsonData = new google.visualization.DataTable();
+        jsonData.addColumn('string', 'stage');
+        jsonData.addColumn('number', 'pass_count');
+        jsonData.addColumn('number', 'fail_count');
+        var fetch_data = $.ajax({
+            url: "/home/api/data/",
+            dataType: "json",
+            success: function (fetch_data) {
+                for (var i = 0; i < fetch_data.length; i++) {
+                    stage = fetch_data[i].stage;
+                    pass_count = fetch_data[i].pass_count;
+                    fail_count = fetch_data[i].fail_count;
+                    jsonData.addRow([stage, pass_count, fail_count]);
+                }
+            },
+            async: false
+        });
+        var options = {
+            width: '100%',
+            height: 350,
+            legend: {position: 'right', alignment: 'center', maxLines: 5},
+            bar: {groupWidth: '80%'},
+            isStacked: true,
+            bars: 'vertical',
+            title: 'Count',
+            subtitle: 'Count of Pass, Fail',
+            chart: {
+                title: 'Data',
+                subtitle: 'Count of Pass, Fail'
+            },
+            hAxis: {
+                showTextEvery: 1,
+                slantedText: true,
+                slantedTextAngle: 45
+            },
+            vAxis: {
+                showTextEvery: 1,
+                slantedText: true,
+                slantedTextAngle: 90
+            },
+            series: {
+                0: {color: 'green'},
+                1: {color: 'red'}
+            }
+        };
+
+        var chart = new google.visualization.ColumnChart(document.getElementById('sbar_div'));
+        chart.draw(jsonData, options);
+    }
+
+    // Load the Visualization API and the piechart package.
+    google.charts.load('current', {'packages': ['corechart', 'bar']});
+    // Set a callback to run when the Google Visualization API is loaded.
+    google.charts.setOnLoadCallback(sbar_div);
+
+</script>
+<!-- jQuery CDN - Slim version (=without AJAX) -->
+<script src="{% static 'vendor/jquery/jquery-3.6.0.min.js' %}"></script>
+<!-- Popper.JS -->
+<script src="{% static 'vendor/bootstrap/js/popper.min.js' %}"></script>
+<!-- Bootstrap JS -->
+<script src="{% static 'vendor/bootstrap/js/bootstrap.min.js' %}"></script>
+</html>
